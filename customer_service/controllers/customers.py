@@ -48,6 +48,16 @@ def create_customer():
                    firstName=customer.first_name,
                    surname=customer.surname), HTTPStatus.CREATED
 
+    customer_repository = current_app.customer_repository
+
+    customer = commands.get_customer(
+        customer_id=int(customer_id),
+        customer_repository=customer_repository)
+
+    return jsonify(customerId=str(customer.customer_id),
+                   firstName=customer.first_name,
+                   surname=customer.surname)
+
 
 @customers.errorhandler(CustomerNotFound)
 def customer_not_found(e):
@@ -67,3 +77,21 @@ class ContentTypeError(RuntimeError):
 def content_type_error(e):
     return jsonify(dict(message='Request must be application/json')), \
            HTTPStatus.UNSUPPORTED_MEDIA_TYPE
+
+@customers.route('/<string:customer_id>', methods=['PUT'])
+def update_customer(customer_id):
+    customer_repository = current_app.customer_repository
+
+    # if not request.is_json:
+    #     raise ContentTypeError()
+
+    body = request.get_json()
+
+    # CREATE_PAYLOAD_SCHEMA.validate(body)
+
+    print("customer.py")
+    commands.update_customer_name(int(customer_id), body["firstName"], body["surname"],
+        customer_repository=customer_repository)
+
+    return "updated ", HTTPStatus.CREATED
+

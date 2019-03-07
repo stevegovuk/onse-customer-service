@@ -19,3 +19,4 @@ def fetch_customer_by_context_id(context, name):
     assert response.status_code == 200, response.status_code
     customer = response.get_json()
     assert f"{customer['firstName']} {customer['surname']}" == name
+
